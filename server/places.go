@@ -280,7 +280,7 @@ func (s *Server) GetLandingPage(
 					continue
 				}
 			}
-			obsTimeSeries.filterAndRank(&obsProp{})
+			obsTimeSeries.filterAndRank(&ObsProp{})
 			filteredData[statVarDcid] = obsTimeSeries
 		}
 		results[dcid] = filteredData
