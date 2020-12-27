@@ -13,44 +13,28 @@
 # limitations under the License.
 
 
-FROM golang:1.15
+# =========  base stage ==========
 
-ARG mod
-ENV MOD=${mod}
-
+FROM golang:1.15 AS go-protoc
 # Install protoc
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y protobuf-compiler
-
 # Install protobuf go plugin
 ENV GO111MODULE=on
 RUN go get google.golang.org/protobuf/cmd/protoc-gen-go@v1.23.0
 RUN go get google.golang.org/grpc/cmd/protoc-gen-go-grpc@v0.0.0-20200824180931-410880dd7d91
 
-# Adding the grpc_health_probe
-RUN GRPC_HEALTH_PROBE_VERSION=v0.3.5 && \
-    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
-    chmod +x /bin/grpc_health_probe
 
-# Copy the source from the current directory the working directory, excluding
-# the deployment directory.
+FROM go-protoc AS base
 WORKDIR /mixer
-
-# Golint
-RUN wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.27.0
-
 # Docker cache: Download modules
 COPY go.mod go.sum /mixer/
 RUN go mod download
-
 # Copy files
 COPY proto/ proto
 COPY pkg/ pkg
-COPY cmd/ cmd
-COPY test/ test
 COPY deploy/ deploy
-
 # Build protobuf
 RUN protoc \
     --proto_path=proto \
@@ -59,12 +43,35 @@ RUN protoc \
     --go-grpc_opt=requireUnimplementedServers=false \
     proto/*.proto
 
-# Perform the action: test; update golden; build binary
 
-RUN if [[ mod == "test" ]] ; then \
-        go test ./... ; \
-    elif [[ mod == "update" ]]; then \
-        go test -v ./test/e2e -generate_golden=true \
-    else \
-        go build -o /go/bin/mixer cmd/main.go \
-    fi
+# =========  server stage ==========
+
+FROM base as server
+# Adding the grpc_health_probe
+RUN GRPC_HEALTH_PROBE_VERSION=v0.3.5 && \
+    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
+    chmod +x /bin/grpc_health_probe
+# Build binary
+COPY cmd/ cmd
+RUN go build -o /go/bin/mixer cmd/main.go
+CMD ["go/bin/mixer"]
+
+
+# =========  test stage ==========
+
+FROM base as test
+WORKDIR /mixer
+# Golint
+RUN wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.27.0
+RUN ./bin/golangci-lint run --timeout=600s
+# Test
+COPY test/ test
+CMD ["go", "test", "./..."]
+
+
+# =========  golden update stage ==========
+
+FROM base as e2e-update
+WORKDIR /mixer
+COPY test/ test
+CMD ["sh", "-c", "go test -v ./test/e2e/... -generate_golden=true $arg && cp -r ./test/e2e/golden_response/ /result"]

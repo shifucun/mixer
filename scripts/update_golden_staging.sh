@@ -36,9 +36,18 @@ done
 shift $((OPTIND-1))
 
 if [[ $TARGET != "" ]]; then
-    ARGS="-run $TARGET"
+    ARG="-run $TARGET"
 else
-    ARGS=""
+    ARG=""
 fi
 
-go test -v $ROOT/test/e2e -generate_golden=true $ARGS
+if [[ $DOCKER == "true" ]]; then
+  DOCKER_BUILDKIT=1 docker build --tag datacommons/mixer-e2e-update  -f build/Dockerfile --target e2e-update .
+  docker run \
+    -v $HOME/.config/gcloud:/root/.config/gcloud \
+    -v $ROOT/test/e2e:/result \
+    -e arg="$ARG" \
+    datacommons/mixer-e2e-update
+else
+    go test -v $ROOT/test/e2e -generate_golden=true $ARG
+fi

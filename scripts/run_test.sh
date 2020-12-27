@@ -23,11 +23,10 @@ while true; do
 done
 
 if [[ $DOCKER == "true" ]]; then
-  docker build --tag datacommons/mixer  -f build/Dockerfile .
+  DOCKER_BUILDKIT=1 docker build --tag datacommons/mixer-test  -f build/Dockerfile --target test .
   docker run \
     -v $HOME/.config/gcloud:/root/.config/gcloud \
-    datacommons/mixer \
-    sh -c "./bin/golangci-lint run --timeout=600s && go test ./..."
+    datacommons/mixer-test
 else
   go test ./...
 fi

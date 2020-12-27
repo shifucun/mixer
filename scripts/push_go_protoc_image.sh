@@ -13,10 +13,7 @@
 # limitations under the License.
 
 #!/bin/bash
-
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-ROOT="$(dirname "$DIR")"
-
 set -e
-go get google.golang.org/protobuf/cmd/protoc-gen-go@v1.23.0
-go get google.golang.org/grpc/cmd/protoc-gen-go-grpc@v0.0.0-20200824180931-410880dd7d91
+
+docker build -t gcr.io/datcom-ci/go-protoc:latest -f build/Dockerfile --target go-protoc .
+docker push gcr.io/datcom-ci/go-protoc:latest
