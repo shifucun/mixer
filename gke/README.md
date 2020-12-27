@@ -43,9 +43,11 @@ This instruction contains the steps to do the first time setup of the GCP projec
 * Setup service account.
   * You may need to ask DataCommons team to do this, if you don't have the owner / editor permission for the data storage project.
 
-  ```bash
-  ./setup_robot_account.sh
-  ```
+  * Run
+
+    ```bash
+    ./setup_robot_account.sh
+    ```
 
 * Deploy Extensive Service Proxy.
   * Put an API title in config.yaml, `api_title` field. If omit, the API title would be the same as the domain.
