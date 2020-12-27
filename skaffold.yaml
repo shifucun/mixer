@@ -24,6 +24,7 @@ build:
     context: .
     docker:
       dockerfile: build/Dockerfile
+      target: server
   - image: datacommons/api-compiler
     context: .
     docker:

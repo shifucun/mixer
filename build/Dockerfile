@@ -47,6 +47,7 @@ RUN protoc \
 # =========  server stage ==========
 
 FROM base as server
+WORKDIR /mixer
 # Adding the grpc_health_probe
 RUN GRPC_HEALTH_PROBE_VERSION=v0.3.5 && \
     wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
@@ -54,7 +55,7 @@ RUN GRPC_HEALTH_PROBE_VERSION=v0.3.5 && \
 # Build binary
 COPY cmd/ cmd
 RUN go build -o /go/bin/mixer cmd/main.go
-CMD ["go/bin/mixer"]
+ENTRYPOINT ["/go/bin/mixer"]
 
 
 # =========  test stage ==========

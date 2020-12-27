@@ -21,6 +21,9 @@ namespace: mixer
 bases:
 - ../../base
 
+resources:
+- serviceaccount.yaml
+
 configMapGenerator:
 - name: mixer-configmap
   behavior: create
