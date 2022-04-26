@@ -37,6 +37,7 @@ import (
 	"github.com/datacommonsorg/mixer/internal/server/v0/propertylabel"
 	"github.com/datacommonsorg/mixer/internal/server/v0/statpoint"
 	"github.com/datacommonsorg/mixer/internal/server/v0/statvarsummary"
+	triplev0 "github.com/datacommonsorg/mixer/internal/server/v0/triple"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -295,7 +296,7 @@ func (s *Server) GetPropertyValues(
 // GetTriples implements API for Mixer.GetTriples.
 func (s *Server) GetTriples(ctx context.Context, in *pb.GetTriplesRequest,
 ) (*pb.PayloadResponse, error) {
-	resp, err := node.GetTriples(ctx, in, s.store, s.metadata)
+	resp, err := triplev0.GetTriples(ctx, in, s.store, s.metadata)
 	if err != nil {
 		return nil, err
 	}

@@ -50,6 +50,10 @@ const (
 	BtPlacesMetadataPrefix = "d/d/"
 	// BtObsCollection for obs collection cache.
 	BtObsCollection = "d/e/"
+	// BtPagedTripleIn for in-arc paged triples.
+	BtPagedTripleIn = "d/f/"
+	// BtPagedTripleOut for out-arc paged triples.
+	BtPagedTripleOut = "d/g/"
 	// BtInPropValPrefix for in-arc prop value.
 	BtInPropValPrefix = "d/l/"
 	// BtOutPropValPrefix for out-arc prop value.
@@ -158,6 +162,20 @@ func BuildStatExistenceKey(
 		}
 	}
 	return rowList, keyToToken
+}
+
+// BuildPagedTriplesKey builds bigtable key for paged triples cache
+func BuildPagedTriplesKey(dcids []string, arcOut bool) bigtable.RowList {
+	rowList := bigtable.RowList{}
+	keyPrefix := BtPagedTripleOut
+	if !arcOut {
+		keyPrefix = BtPagedTripleIn
+	}
+	for _, dcid := range dcids {
+		rowKey := fmt.Sprintf("%s%s", keyPrefix, dcid)
+		rowList = append(rowList, rowKey)
+	}
+	return rowList
 }
 
 // BuildPropertyValuesKey builds bigtable key for property value cache

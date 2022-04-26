@@ -22,6 +22,7 @@ import (
 	"github.com/datacommonsorg/mixer/internal/server/v1/observations"
 	"github.com/datacommonsorg/mixer/internal/server/v1/page"
 	"github.com/datacommonsorg/mixer/internal/server/v1/properties"
+	"github.com/datacommonsorg/mixer/internal/server/v1/triple"
 	"github.com/datacommonsorg/mixer/internal/server/v1/variables"
 )
 
@@ -37,6 +38,13 @@ func (s *Server) BulkProperties(
 	ctx context.Context, in *pb.BulkPropertiesRequest,
 ) (*pb.BulkPropertiesResponse, error) {
 	return properties.BulkProperties(ctx, in, s.store)
+}
+
+// TriplesV1 implements API for mixer.TriplesV1.
+func (s *Server) Triples(
+	ctx context.Context, in *pb.TriplesRequest,
+) (*pb.TriplesResponse, error) {
+	return triple.Triples(ctx, in, s.store)
 }
 
 // Variables implements API for mixer.Variables.
