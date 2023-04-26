@@ -356,7 +356,7 @@ service Mixer {
     };
   }
 
-  // V2 [NA]
+  // V2 [DONE]
   rpc Triples(datacommons.v1.TriplesRequest)
       returns (datacommons.v1.TriplesResponse) {
     option (google.api.http) = {
@@ -364,7 +364,7 @@ service Mixer {
     };
   }
 
-  // V2 [NA]
+  // V2 [DONE]
   rpc BulkTriples(datacommons.v1.BulkTriplesRequest)
       returns (datacommons.v1.BulkTriplesResponse) {
     option (google.api.http) = {
@@ -535,14 +535,14 @@ service Mixer {
     };
   }
 
-  // V2 [NA]
+  // V2 [TODO]
   rpc BioPage(datacommons.v1.BioPageRequest) returns (GraphNodes) {
     option (google.api.http) = {
       get : "/v1/internal/page/bio/{node=**}"
     };
   }
 
-  // V2 [NA]
+  // V2 [TODO]
   rpc PlacePage(datacommons.v1.PlacePageRequest)
       returns (datacommons.v1.PlacePageResponse) {
     option (google.api.http) = {
@@ -618,7 +618,7 @@ service Mixer {
     };
   }
 
-  // V2 [TODO]
+  // V2 [DONE]
   // Find entities from a description, with an optional filter on type.
   rpc FindEntities(FindEntitiesRequest) returns (FindEntitiesResponse) {
     option (google.api.http) = {
@@ -627,7 +627,7 @@ service Mixer {
     };
   }
 
-  // V2 [TODO]
+  // V2 [DONE]
   // Find entities from descriptions, with optional filters on types.
   rpc BulkFindEntities(BulkFindEntitiesRequest)
       returns (BulkFindEntitiesResponse) {
@@ -637,7 +637,7 @@ service Mixer {
     };
   }
 
-  // V2 [TODO]
+  // V2 [NA]
   // Recognize places from a NL query.
   rpc RecognizePlaces(RecognizePlacesRequest)
       returns (RecognizePlacesResponse) {
